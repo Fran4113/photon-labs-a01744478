@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071b35" />
+  <meta name="description" content="Simulador interactivo para comprender cómo una celda solar transforma la luz en corriente eléctrica." />
+  <title>Simulador solar | Photon Labs</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="simulador.css" />
+  <script src="simulador.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <div class="wrap nav">
+      <a href="index.html" class="brand" aria-label="Photon Labs, inicio"><span class="brand-icon">☀</span><span>PHOTON <b>LABS</b></span></a>
+      <nav aria-label="Navegación principal"><a href="index.html#proyecto">Proyecto</a><a href="#como-funciona">Cómo funciona</a><a href="#practica">Nuestra práctica</a></nav>
+      <a class="nav-cta" href="index.html">Inicio <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main>
+    <section class="sim-hero wrap">
+      <span class="eyebrow"><span class="dot"></span> LABORATORIO INTERACTIVO · TE1020</span>
+      <h1>La luz se convierte en <span>corriente.</span></h1>
+      <p>Ajusta la iluminación y la carga. Observa cómo responde el modelo de una celda solar y sigue el viaje de las cargas eléctricas.</p>
+    </section>
+
+    <section class="sim-layout wrap" aria-label="Simulador de celda solar">
+      <div class="sim-card controls-card">
+        <div class="card-title"><div><span class="overline">CONTROLES</span><h2>Configura el experimento</h2></div><span class="sun-badge" aria-hidden="true">☀</span></div>
+        <label class="control-label" for="lightRange"><span>Intensidad de luz</span><strong id="lightValue">75%</strong></label>
+        <input id="lightRange" type="range" min="0" max="100" value="75" aria-describedby="lightHint" />
+        <p class="control-hint" id="lightHint">Más luz aporta más fotones a la celda.</p>
+        <label class="control-label load-label" for="loadRange"><span>Resistencia de la carga</span><strong><span id="loadValue">100</span> Ω</strong></label>
+        <input id="loadRange" type="range" min="10" max="500" value="100" step="10" aria-describedby="loadHint" />
+        <p class="control-hint" id="loadHint">La carga representa el dispositivo conectado al panel.</p>
+        <div class="readings" aria-live="polite">
+          <div class="reading"><span>Voltaje</span><strong><span id="voltageValue">—</span><small> V</small></strong></div>
+          <div class="reading"><span>Corriente</span><strong><span id="currentValue">—</span><small> mA</small></strong></div>
+          <div class="reading power-reading"><span>Potencia estimada</span><strong><span id="powerValue">—</span><small> mW</small></strong></div>
+        </div>
+        <p class="model-note">Modelo didáctico simplificado: los valores ilustran tendencias y no sustituyen una medición de laboratorio.</p>
+      </div>
+
+      <div class="sim-card diagram-card">
+        <div class="card-title"><div><span class="overline">DENTRO DE LA CELDA</span><h2>El recorrido de la energía</h2></div><span class="live-indicator"><i></i> Simulación activa</span></div>
+        <div class="cell-scene" id="cellScene" data-light="75">
+          <div class="sun-rays" aria-hidden="true"><span>✦</span><span>✦</span><span>✦</span><span>✦</span><span>✦</span></div>
+          <div class="photon-label">Fotones de luz</div>
+          <div class="cell-stack" aria-label="Esquema de capas de una celda fotovoltaica">
+            <div class="cell-layer top-layer"><span>Contacto frontal</span><b>−</b></div>
+            <div class="cell-layer n-layer"><span>Silicio tipo N</span><b class="electron">e⁻</b></div>
+            <div class="junction"><span>Unión P–N · campo eléctrico</span><i></i></div>
+            <div class="cell-layer p-layer"><span>Silicio tipo P</span><b class="hole">h⁺</b></div>
+            <div class="cell-layer bottom-layer"><span>Contacto posterior</span><b>+</b></div>
+          </div>
+          <div class="circuit-line"><span class="flow-dot"></span><span class="load-symbol">R</span><span class="circuit-caption">Los electrones recorren el circuito externo</span></div>
+        </div>
+        <div class="legend"><span><i class="legend-photon"></i> Fotón</span><span><i class="legend-electron"></i> Electrón (−)</span><span><i class="legend-hole"></i> Hueco (+)</span></div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="como-funciona">
+      <div class="section-heading"><span class="overline">EFECTO FOTOVOLTAICO</span><h2>¿Qué ocurre cuando llega la luz?</h2><p>La celda no almacena la luz: convierte parte de su energía en movimiento ordenado de cargas.</p></div>
+      <div class="steps science-steps">
+        <article><span>01</span><h3>La luz llega</h3><p>Los fotones son paquetes de energía. Al ser absorbidos por el semiconductor, pueden transferir energía a sus electrones.</p></article>
+        <article><span>02</span><h3>Se separan las cargas</h3><p>La energía libera electrones y deja huecos. El campo eléctrico de la unión P–N los dirige hacia lados opuestos.</p></article>
+        <article><span>03</span><h3>Circula corriente</h3><p>Al cerrar el circuito con una carga, los electrones fluyen por el cable. Ese movimiento es corriente eléctrica útil.</p></article>
+      </div>
+      <aside class="concept-note"><strong>¿Y el efecto fotoeléctrico?</strong><p>Es el fenómeno general en el que la luz transfiere energía a electrones. En una celda solar, esa interacción ocurre dentro del material y la unión P–N separa las cargas: a este proceso se le llama <b>efecto fotovoltaico</b>.</p></aside>
+    </section>
+
+    <section class="practice-band" id="practica"><div class="wrap practice-inner"><div><span class="overline">DE LA PRÁCTICA AL SIMULADOR</span><h2>Medimos una celda real con el multímetro.</h2><p>En la práctica registramos voltaje de corriente directa y corriente bajo las condiciones de iluminación del momento. Los resultados cambian con la luz, el ángulo, la temperatura y la carga.</p></div><div class="practice-readings"><div><span>Voltaje medido</span><strong>9.17 <small>V DC</small></strong></div><div><span>Corriente medida</span><strong>9 <small>mA DC</small></strong></div><small>Lecturas observadas durante la práctica del equipo.</small></div></div></section>
+  </main>
+  <footer><div class="wrap footer-inner"><div><strong>PHOTON <span>LABS</span></strong><p>Proyecto académico de Análisis de Circuitos Eléctricos · TE1020</p></div><div class="footer-right"><strong>A01744478</strong><small>© 2026 · Proyecto académico independiente basado en el caso Photon Labs.</small></div></div></footer>
+</body>
+</html>
