@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="simulador.css" />
   <script src="simulador.js" defer></script>
+  <script src="page-transitions.js" defer></script>
 </head>
 <body>
   <header class="header">
@@ -21,33 +22,43 @@
   </header>
   <main>
     <section class="sim-hero wrap">
-      <span class="eyebrow"><span class="dot"></span> LABORATORIO INTERACTIVO · TE1020</span>
-      <h1>La luz se convierte en <span>corriente.</span></h1>
-      <p>Ajusta la iluminación y la carga. Observa cómo responde el modelo de una celda solar y sigue el viaje de las cargas eléctricas.</p>
+      <span class="eyebrow"><span class="dot"></span> EXPLORA LA ENERGÍA SOLAR · TE1020</span>
+      <h1>¿Puede este fotón encender <span>tu futuro?</span></h1>
+      <p>Cambia el color y la intensidad de la luz. Mira cómo la energía de la luz puede poner electrones en movimiento y producir electricidad.</p>
     </section>
 
     <section class="sim-layout wrap" aria-label="Simulador de celda solar">
       <div class="sim-card controls-card">
-        <div class="card-title"><div><span class="overline">CONTROLES</span><h2>Configura el experimento</h2></div><span class="sun-badge" aria-hidden="true">☀</span></div>
-        <label class="control-label" for="lightRange"><span>Intensidad de luz</span><strong id="lightValue">75%</strong></label>
+        <div class="card-title"><div><span class="overline">TÚ CONTROLAS LA LUZ</span><h2>Prueba un fotón</h2></div><span class="sun-badge" aria-hidden="true">☀</span></div>
+        <label class="control-label" for="wavelengthRange"><span>Color de la luz</span><strong><span id="wavelengthValue">650</span> nm</strong></label>
+        <input class="spectrum-range" id="wavelengthRange" type="range" min="380" max="1200" value="650" aria-describedby="wavelengthHint" />
+        <div class="spectrum-labels"><span>Violeta</span><span>Rojo</span><span>Infrarrojo</span></div>
+        <p class="control-hint" id="wavelengthHint">El color indica la longitud de onda; “nm” es una medida de esa distancia.</p>
+        <label class="control-label load-label" for="lightRange"><span>Intensidad de luz</span><strong id="lightValue">75%</strong></label>
         <input id="lightRange" type="range" min="0" max="100" value="75" aria-describedby="lightHint" />
-        <p class="control-hint" id="lightHint">Más luz aporta más fotones a la celda.</p>
-        <label class="control-label load-label" for="loadRange"><span>Resistencia de la carga</span><strong><span id="loadValue">100</span> Ω</strong></label>
-        <input id="loadRange" type="range" min="10" max="500" value="100" step="10" aria-describedby="loadHint" />
-        <p class="control-hint" id="loadHint">La carga representa el dispositivo conectado al panel.</p>
+        <p class="control-hint" id="lightHint">Más intensidad significa más fotones llegando cada segundo.</p>
+        <div class="photon-facts" aria-live="polite">
+          <div><span>Energía de cada paquete de luz</span><strong><span id="photonEnergy">1.91</span> eV</strong></div>
+          <div><span>Mínimo para activar el silicio</span><strong>1.12 eV</strong></div>
+        </div>
+        <div class="threshold-message" id="thresholdMessage" role="status">Este fotón puede activar el silicio.</div>
+        <label class="control-label load-label" for="loadRange"><span>Carga conectada</span><strong><span id="loadValue">1000</span> Ω</strong></label>
+        <input id="loadRange" type="range" min="100" max="2000" value="1000" step="50" aria-describedby="loadHint" />
+        <p class="control-hint" id="loadHint">La carga representa el dispositivo que usa la energía.</p>
         <div class="readings" aria-live="polite">
           <div class="reading"><span>Voltaje</span><strong><span id="voltageValue">—</span><small> V</small></strong></div>
           <div class="reading"><span>Corriente</span><strong><span id="currentValue">—</span><small> mA</small></strong></div>
           <div class="reading power-reading"><span>Potencia estimada</span><strong><span id="powerValue">—</span><small> mW</small></strong></div>
         </div>
-        <p class="model-note">Modelo didáctico simplificado: los valores ilustran tendencias y no sustituyen una medición de laboratorio.</p>
+        <p class="model-note">Este modelo simplifica el comportamiento de una celda de silicio. El voltaje es el “empuje” eléctrico; la corriente es el flujo de electricidad. Los valores reales cambian según el panel y las condiciones.</p>
       </div>
 
       <div class="sim-card diagram-card">
-        <div class="card-title"><div><span class="overline">DENTRO DE LA CELDA</span><h2>El recorrido de la energía</h2></div><span class="live-indicator"><i></i> Simulación activa</span></div>
-        <div class="cell-scene" id="cellScene" data-light="75">
+        <div class="card-title"><div><span class="overline">CELDA FOTOVOLTAICA</span><h2>De fotón a electricidad</h2></div><span class="live-indicator" id="sceneStatus"><i></i> Fotón activo</span></div>
+        <div class="cell-scene" id="cellScene" data-light="75" data-threshold="met" data-circuit="closed">
           <div class="sun-rays" aria-hidden="true"><span>✦</span><span>✦</span><span>✦</span><span>✦</span><span>✦</span></div>
-          <div class="photon-label">Fotones de luz</div>
+          <div class="photon-label" id="photonLabel">Fotones · 650 nm</div>
+          <div class="beam" aria-hidden="true"><span class="beam-photon">●</span><span class="beam-photon">●</span><span class="beam-photon">●</span><span class="beam-photon">●</span><span class="beam-photon">●</span></div>
           <div class="cell-stack" aria-label="Esquema de capas de una celda fotovoltaica">
             <div class="cell-layer top-layer"><span>Contacto frontal</span><b>−</b></div>
             <div class="cell-layer n-layer"><span>Silicio tipo N</span><b class="electron">e⁻</b></div>
@@ -55,8 +66,9 @@
             <div class="cell-layer p-layer"><span>Silicio tipo P</span><b class="hole">h⁺</b></div>
             <div class="cell-layer bottom-layer"><span>Contacto posterior</span><b>+</b></div>
           </div>
-          <div class="circuit-line"><span class="flow-dot"></span><span class="load-symbol">R</span><span class="circuit-caption">Los electrones recorren el circuito externo</span></div>
+          <div class="circuit-line"><span class="flow-dot"></span><span class="load-symbol" id="loadSymbol"><span class="load-bulb">✦</span><small>CARGA</small></span><span class="circuit-caption" id="circuitCaption">Cargas en movimiento · circuito cerrado</span></div>
         </div>
+        <div class="scene-actions"><button class="switch-button" id="circuitToggle" type="button" aria-pressed="true"><span aria-hidden="true">⏻</span><span id="switchText">Abrir circuito</span></button><p>Prueba abrirlo: el voltaje permanece, pero la corriente deja de circular.</p></div>
         <div class="legend"><span><i class="legend-photon"></i> Fotón</span><span><i class="legend-electron"></i> Electrón (−)</span><span><i class="legend-hole"></i> Hueco (+)</span></div>
       </div>
     </section>
@@ -64,14 +76,16 @@
     <section class="section wrap" id="como-funciona">
       <div class="section-heading"><span class="overline">EFECTO FOTOVOLTAICO</span><h2>¿Qué ocurre cuando llega la luz?</h2><p>La celda no almacena la luz: convierte parte de su energía en movimiento ordenado de cargas.</p></div>
       <div class="steps science-steps">
-        <article><span>01</span><h3>La luz llega</h3><p>Los fotones son paquetes de energía. Al ser absorbidos por el semiconductor, pueden transferir energía a sus electrones.</p></article>
-        <article><span>02</span><h3>Se separan las cargas</h3><p>La energía libera electrones y deja huecos. El campo eléctrico de la unión P–N los dirige hacia lados opuestos.</p></article>
-        <article><span>03</span><h3>Circula corriente</h3><p>Al cerrar el circuito con una carga, los electrones fluyen por el cable. Ese movimiento es corriente eléctrica útil.</p></article>
+        <article><span>01</span><h3>La luz llega</h3><p>La luz está formada por pequeños paquetes llamados <b>fotones</b>. Cada uno lleva energía.</p></article>
+        <article><span>02</span><h3>La celda activa las cargas</h3><p>Si un fotón tiene suficiente energía, libera un electrón y deja un espacio llamado <b>hueco</b>. La celda los separa.</p></article>
+        <article><span>03</span><h3>La electricidad fluye</h3><p>Al cerrar el circuito, los electrones viajan por el cable. Ese flujo es la corriente que puede usar un aparato.</p></article>
       </div>
-      <aside class="concept-note"><strong>¿Y el efecto fotoeléctrico?</strong><p>Es el fenómeno general en el que la luz transfiere energía a electrones. En una celda solar, esa interacción ocurre dentro del material y la unión P–N separa las cargas: a este proceso se le llama <b>efecto fotovoltaico</b>.</p></aside>
+      <aside class="concept-note"><strong>¿Cómo se llama este proceso?</strong><p>Cuando la luz entrega energía a los electrones ocurre el <b>efecto fotoeléctrico</b>. Dentro de una celda solar, el material separa las cargas y genera electricidad: eso se llama <b>efecto fotovoltaico</b>.</p><details class="more-science"><summary>Ver la explicación con más detalle</summary><p>La energía se estima con E = 1240 ÷ λ. En esta fórmula, λ es el color de la luz medido en nanómetros (nm), y eV es una unidad para medir energía. El silicio necesita al menos 1.12 eV para liberar una carga.</p></details></aside>
     </section>
 
-    <section class="practice-band" id="practica"><div class="wrap practice-inner"><div><span class="overline">DE LA PRÁCTICA AL SIMULADOR</span><h2>Medimos una celda real con el multímetro.</h2><p>En la práctica registramos voltaje de corriente directa y corriente bajo las condiciones de iluminación del momento. Los resultados cambian con la luz, el ángulo, la temperatura y la carga.</p></div><div class="practice-readings"><div><span>Voltaje medido</span><strong>9.17 <small>V DC</small></strong></div><div><span>Corriente medida</span><strong>9 <small>mA DC</small></strong></div><small>Lecturas observadas durante la práctica del equipo.</small></div></div></section>
+    <section class="scale-band"><div class="wrap"><div class="section-heading"><span class="overline">DE UNA CELDA A TU HOGAR</span><h2>Una celda es el comienzo.</h2><p>Los sistemas solares comerciales conectan muchas celdas para generar energía a una escala útil.</p></div><div class="scale-steps"><article><span>01</span><b class="scale-icon">▦</b><h3>Celda</h3><p>El silicio convierte la luz en corriente eléctrica.</p></article><article><span>02</span><b class="scale-icon">▤</b><h3>Módulo solar</h3><p>Muchas celdas trabajan juntas dentro de un panel.</p></article><article><span>03</span><b class="scale-icon">⌂</b><h3>Sistema para tu espacio</h3><p>Varios módulos se integran para aprovechar la energía del sol.</p></article></div></div></section>
+
+    <section class="practice-band" id="practica"><div class="wrap practice-inner"><div><span class="overline">DE LA PRÁCTICA AL SIMULADOR</span><h2>Medimos una celda real con el multímetro.</h2><p>Registramos el voltaje con el multímetro en modo voltímetro y la corriente en modo amperímetro. Son lecturas de configuraciones distintas; cambian con la luz, el ángulo, la temperatura y la conexión.</p></div><div class="practice-readings"><div><span>Voltaje observado</span><strong>9.17 <small>V DC</small></strong></div><div><span>Corriente observada</span><strong>9 <small>mA DC</small></strong></div><small>Resultados de la práctica del equipo; no son una sola medición simultánea.</small></div></div></section>
   </main>
   <footer><div class="wrap footer-inner"><div><strong>PHOTON <span>LABS</span></strong><p>Proyecto académico de Análisis de Circuitos Eléctricos · TE1020</p></div><div class="footer-right"><strong>A01744478</strong><small>© 2026 · Proyecto académico independiente basado en el caso Photon Labs.</small></div></div></footer>
 </body>
